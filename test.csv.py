@@ -35,7 +35,7 @@ def tester():
         d = row[3]
         f = row[4]
 
-        result = (not a and not b and c and not d) or (not a and b and c and not d) or (a and not b and not c and not d) or (a and b and not c and not d) or (a and b and not c and d) or (a and b and c and not d) or (a and b and c and d)
+        result = (not a or not d) and (a or c) and (not b or not c or d)
                 
         if result == f:
             passed = passed + 1

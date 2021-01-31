@@ -1,4 +1,6 @@
 import csv
+import chromedriver as cd
+import time
 
 TEST_FILE = "test.csv"
 
@@ -41,7 +43,26 @@ def solver(f = TEST_FILE):
             formula += f"({sub_formula})"
     return formula
 
-def create_tester(f = TEST_FILE):    
+def get_cnf(formula):
+    url = "https://www.dcode.fr/boolean-expressions-calculator"
+    driver = cd.CreateDriver()
+    driver.get(url)
+    time.sleep(2)
+
+    driver.find_element_by_css_selector('#label_bool_calculator_format_cnf').click()
+    driver.find_element_by_css_selector('#bool_calculator > table > tbody > tr > td:nth-child(2) > label:nth-child(7)').click()
+    input_element = driver.find_element_by_css_selector("#bool_calculator_input")
+    input_element.clear()
+    input_element.send_keys(formula)
+    input_element.send_keys(cd.enter_key)
+    time.sleep(5)
+    result = driver.find_element_by_css_selector('#results > div.result').text
+    driver.quit() 
+    
+    cnf = result.lower()
+    return cnf
+
+def create_tester(formula, f = TEST_FILE):    
     template = """
 import csv
 
@@ -95,7 +116,6 @@ tester()
         else:
             v += f"        {var[i]} = row[{i}]\n"
 
-    formula = solver(f)
     template = template.replace("VARIABLES", v)
     template = template.replace("FORMULA", formula)
     template = template.replace("REPLACE_FILE", f'"{f}"')
@@ -111,9 +131,9 @@ def get_symbols(formula):
 
 if __name__ == "__main__":
     
-    formula = solver()
-    create_tester()
-    print(get_symbols(formula))
+    f = TEST_FILE
+    formula = get_cnf(solver(f))
+    create_tester(formula, f)
 
     pass 
 
