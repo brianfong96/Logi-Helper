@@ -103,7 +103,8 @@ def tester():
             print(f"Expected:\t{row}")
             print("-------------------------------------------")
         
-    
+    print("Using the following formula:")    
+    print("FORMULA")
     print(f"{passed}/{total} cases passed.")
 
 tester()
@@ -132,7 +133,7 @@ def get_symbols(formula):
 if __name__ == "__main__":
     
     f = TEST_FILE
-    formula = get_cnf(solver(f))
+    formula = get_cnf(solver(f))    
     create_tester(formula, f)
 
     pass 

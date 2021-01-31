@@ -43,7 +43,8 @@ def tester():
             print(f"Expected:	{row}")
             print("-------------------------------------------")
         
-    
+    print("Using the following formula:")    
+    print("(not a or not d) and (a or c) and (not b or not c or d)")
     print(f"{passed}/{total} cases passed.")
 
 tester()
