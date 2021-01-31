@@ -1,31 +1,9 @@
-import csv
 import chromedriver as cd
 import time
+import common
 
-TEST_FILE = "test.csv"
-
-def isT(s):    
-    return s == 'T'
-
-def make_truth_table(f = TEST_FILE):
-    with open(f) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        table = list()
-        var = list()
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:                
-                for i in range(len(row)):
-                    var.append(row[i])
-            else:
-                row_vals = [isT(v) for v in row]
-                table.append(row_vals)
-            line_count += 1
-        
-        return table, var
-
-def solver(f = TEST_FILE):
-    table, var = make_truth_table(f)    
+def solver(f = common.TEST_FILE):
+    table, var = common.make_truth_table(f)    
     formula = ""
 
     for row in table:                    
@@ -41,6 +19,7 @@ def solver(f = TEST_FILE):
             if formula != "":
                 formula += " or "
             formula += f"({sub_formula})"
+
     return formula
 
 def get_cnf(formula):
@@ -60,36 +39,20 @@ def get_cnf(formula):
     driver.quit() 
     
     cnf = result.lower()
+    if formula == "true":
+        cnf = "True"
+    elif formula == "false":
+        cnf = "False"
     return cnf
 
-def create_tester(formula, f = TEST_FILE):    
+def create_tester(formula, f = common.TEST_FILE):    
     template = """
-import csv
+import common
 
 TEST_FILE = REPLACE_FILE
 
-def isT(s):    
-    return s == 'T'
-
-def make_truth_table(f = TEST_FILE):
-    with open(f) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        table = list()
-        var = list()
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:                
-                for i in range(len(row)-1):
-                    var.append(row[i])
-            else:
-                row_vals = [isT(v) for v in row]
-                table.append(row_vals)
-            line_count += 1
-        
-        return table, var
-
 def tester():
-    table, var = make_truth_table()
+    table, var = common.make_truth_table()
     total = len(table)
     passed = 0
 
@@ -109,7 +72,7 @@ def tester():
 
 tester()
     """
-    table, var = make_truth_table(f)    
+    table, var = common.make_truth_table(f)    
     v = ""
     for i in range(len(var)):
         if i == 0:
@@ -129,10 +92,14 @@ def get_symbols(formula):
     sym_form = sym_form.replace("not ", "~")
     return sym_form
 
+def create_truth_table(formula):
+    table = list()
+    
+    return table
 
 if __name__ == "__main__":
     
-    f = TEST_FILE
+    f = common.TEST_FILE
     formula = get_cnf(solver(f))    
     create_tester(formula, f)
 
